@@ -1,0 +1,83 @@
+{% extends "core/base.html" %}
+
+{% block title %}Welcome to FormEase{% endblock %}
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="display-4 mb-3">Welcome to FormEase 🚀</h1>
+    <p class="lead">Your intelligent document processing assistant</p>
+</div>
+
+<div class="card-container">
+    <div class="card-row">
+        <!-- First Row -->
+        <div class="feature-card">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt feature-icon"></i>
+                    <h5 class="card-title">PDF Summary</h5>
+                    <p class="card-text">Extract key insights from your PDF documents using AI-powered summarization.</p>
+                    <a href="{% url 'pdf_summary' %}" class="btn discover-btn">Try PDF Summary</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-signature feature-icon"></i>
+                    <h5 class="card-title">Resume Builder</h5>
+                    <p class="card-text">Create professional resumes with AI assistance.</p>
+                    <a href="{% url 'resume_builder' %}" class="btn discover-btn">Build Resume</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-tasks feature-icon"></i>
+                    <h5 class="card-title">To-Do List</h5>
+                    <p class="card-text">Organize your tasks and stay productive.</p>
+                    <a href="#" class="btn discover-btn">Manage Tasks</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-row">
+        <!-- Second Row -->
+        <div class="feature-card">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-pdf feature-icon"></i>
+                    <h5 class="card-title">PDF Controls</h5>
+                    <p class="card-text">Merge, split, and edit your PDFs seamlessly.</p>
+                    <a href="#" class="btn discover-btn">Control PDFs</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-project-diagram feature-icon"></i>
+                    <h5 class="card-title">Mind Maps</h5>
+                    <p class="card-text">Visualize your ideas and concepts effectively.</p>
+                    <a href="#" class="btn discover-btn">Create Mind Maps</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-question-circle feature-icon"></i>
+                    <h5 class="card-title">QnA Generation</h5>
+                    <p class="card-text">Generate questions and answers from your documents.</p>
+                    <a href="#" class="btn discover-btn">Generate QnA</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

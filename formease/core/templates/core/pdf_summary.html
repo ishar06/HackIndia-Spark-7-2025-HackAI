@@ -1,0 +1,136 @@
+{% extends "core/base.html" %}
+
+{% block title %}PDF Summary - FormEase{% endblock %}
+
+{% block extra_css %}
+<style>
+    .summary-box {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    .summary-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #2c3e50;
+    }
+    .summary-content h2 {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 1.5rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #3498db;
+    }
+    .summary-content h3 {
+        color: #34495e;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 1.25rem 0 0.75rem;
+    }
+    .summary-content p {
+        margin-bottom: 1rem;
+    }
+    .summary-content ul {
+        margin: 1rem 0;
+        padding-left: 2rem;
+    }
+    .summary-content li {
+        margin-bottom: 0.75rem;
+    }
+    .summary-content .highlight {
+        background-color: #f1f8ff;
+        padding: 1rem;
+        border-radius: 4px;
+        border-left: 4px solid #3498db;
+        margin: 1rem 0;
+    }
+    .upload-box {
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    .upload-box:hover {
+        border-color: #0d6efd;
+        background: #f1f5ff;
+    }
+    .loading {
+        display: none;
+        margin: 2rem 0;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const loadingDiv = document.querySelector('.loading');
+    const fileInput = document.querySelector('input[type="file"]');
+    const uploadLabel = document.querySelector('.upload-label');
+
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            uploadLabel.textContent = this.files[0].name;
+        } else {
+            uploadLabel.textContent = 'Choose a PDF file or drag it here';
+        }
+    });
+
+    form.addEventListener('submit', function() {
+        loadingDiv.style.display = 'block';
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="display-4 mb-3">PDF Summary 📄</h1>
+    <p class="lead">Upload your PDF and get an AI-powered summary</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form method="post" enctype="multipart/form-data" class="mb-4">
+            {% csrf_token %}
+            <div class="upload-box">
+                <input type="file" name="pdf_file" accept=".pdf" required 
+                       class="form-control" id="pdf_file" style="display: none;">
+                <label for="pdf_file" class="upload-label mb-0" style="cursor: pointer;">
+                    <i class="fas fa-cloud-upload-alt mb-3" style="font-size: 3rem;"></i>
+                    <br>
+                    Choose a PDF file or drag it here
+                </label>
+            </div>
+            
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-magic me-2"></i>Generate Summary
+                </button>
+            </div>
+        </form>
+
+        <div class="loading text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Processing your document...</p>
+        </div>
+
+        {% if summary %}
+        <div class="summary-box">
+            <h2 class="h4 mb-3"><i class="fas fa-list-ul me-2"></i>Summary</h2>
+            <div class="summary-content">
+                {{ summary|safe|linebreaksbr }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

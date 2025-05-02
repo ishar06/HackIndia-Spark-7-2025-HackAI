@@ -1,0 +1,226 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 2em;
+    background-color: rgba(23, 23, 23, 0.85);
+    border-radius: 25px;
+    transition: 0.4s ease-in-out;   
+    min-height: 500px;
+    color: #fff;
+    backdrop-filter: blur(10px);
+  }
+
+  .bg-video {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+    object-fit: cover;
+    filter: brightness(0.4);
+  }
+
+  .bg-video.fade-out {
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+  }
+
+  .card {
+    background: linear-gradient(135deg, #ffd700, #b8860b);
+    border-radius: 22px;
+    transition: all 0.3s;
+    max-width: 400px;
+    margin: 50px auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .card2 {
+    border-radius: 20px;
+    transition: all 0.2s;
+    transform: scale(0.98);
+  }
+
+  .card:hover {
+    box-shadow: 0px 0px 30px rgba(255, 215, 0, 0.3);
+  }
+
+  #heading {
+    text-align: center;
+    margin: 1em 0 1.5em;
+    color: #fff;
+    font-size: 1.8em;
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    border-radius: 25px;
+    padding: 0.8em 1.2em;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .field:focus-within {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+  }
+
+  .input-icon {
+    height: 1.3em;
+    width: 1.3em;
+    fill: #ffd700;
+  }
+
+  .input-field {
+    background: none !important;
+    border: none !important;
+    outline: none;
+    width: 100%;
+    color: #fff !important;
+    font-size: 1em;
+    box-shadow: none !important;
+  }
+
+  .input-field::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .input-field:-webkit-autofill,
+  .input-field:-webkit-autofill:hover,
+  .input-field:-webkit-autofill:focus {
+    -webkit-text-fill-color: #fff !important;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  .btn-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2em;
+    gap: 1em;
+  }
+
+  .button {
+    flex: 1;
+    padding: 0.8em;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .button-login {
+    background: linear-gradient(135deg, #ffd700, #b8860b);
+    color: #000;
+  }
+
+  .button-signup {
+    background: transparent;
+    border: 1px solid #ffd700;
+    color: #ffd700;
+  }
+
+  .button:hover {
+    transform: translateY(-2px);
+  }
+
+  .button-login:hover {
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+  }
+
+  .button-signup:hover {
+    background: linear-gradient(135deg, #ffd700, #b8860b);
+    border-color: transparent;
+    color: #000;
+  }
+
+  .forgot-password {
+    text-align: center;
+    margin-top: 1.5em;
+  }
+
+  .forgot-password a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+  }
+
+  .forgot-password a:hover {
+    color: #ffd700;
+  }
+
+  .error-message {
+    color: #ff4444;
+    font-size: 0.9rem;
+    margin: 0.5em 0;
+    text-align: center;
+    padding: 0.5em 1em;
+    background-color: rgba(255, 68, 68, 0.1);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 68, 68, 0.2);
+  }
+
+  .field-error {
+    border-color: #ff4444;
+  }
+</style>
+
+<video autoplay muted loop class="bg-video">
+  <source src="{% static 'core/videos/login_bg.mp4' %}" type="video/mp4">
+  Your browser does not support HTML5 video.
+</video>
+
+<div class="card">
+  <div class="card2">
+    <form class="form" method="post">
+      {% csrf_token %}
+      <p id="heading">Welcome Back</p>
+      
+      {% if messages %}
+        {% for message in messages %}
+          <div class="error-message">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="field">
+        <svg class="input-icon" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+        </svg>
+        <input type="text" name="username" class="input-field" placeholder="Username" required>
+      </div>
+
+      <div class="field">
+        <svg class="input-icon" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+        </svg>
+        <input type="password" name="password" class="input-field" placeholder="Password" required>
+      </div>
+
+      <div class="btn-container">
+        <button type="submit" class="button button-login">Login</button>
+        <a href="{% url 'register' %}" class="button button-signup">Sign Up</a>
+      </div>
+
+      <div class="forgot-password">
+        <a href="#">Forgot Password?</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,242 @@
+{% extends "core/base.html" %}
+{% block title %}Register - FormEase{% endblock %}
+{% load static %}
+{% block content %}
+<style>
+    .bg-video {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        z-index: -1;
+        object-fit: cover;
+        filter: brightness(0.4);
+    }
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 2em;
+        background-color: rgba(23, 23, 23, 0.85);
+        border-radius: 25px;
+        transition: 0.4s ease-in-out;
+        min-height: 500px;
+        color: #fff;
+        backdrop-filter: blur(10px);
+    }
+
+    .card {
+        background: linear-gradient(135deg, #ffd700, #b8860b);
+        border-radius: 22px;
+        transition: all 0.3s;
+        max-width: 450px;
+        margin: 50px auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .card2 {
+        border-radius: 20px;
+        transition: all 0.2s;
+        transform: scale(0.98);
+    }
+
+    .card:hover {
+        box-shadow: 0px 0px 30px rgba(255, 215, 0, 0.3);
+    }
+
+    #heading {
+        text-align: center;
+        margin: 1em 0 1.5em;
+        color: #fff;
+        font-size: 1.8em;
+    }
+
+    .field {
+        display: flex;
+        align-items: center;
+        gap: 0.8em;
+        border-radius: 25px;
+        padding: 0.8em 1.2em;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 215, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .field:focus-within {
+        border-color: #ffd700;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+
+    .input-icon {
+        height: 1.3em;
+        width: 1.3em;
+        fill: #ffd700;
+    }
+
+    .input-field {
+        background: none !important;
+        border: none !important;
+        outline: none;
+        width: 100%;
+        color: #fff !important;
+        font-size: 1em;
+        box-shadow: none !important;
+    }
+
+    .input-field::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .input-field:-webkit-autofill,
+    .input-field:-webkit-autofill:hover,
+    .input-field:-webkit-autofill:focus {
+        -webkit-text-fill-color: #fff;
+        -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 2em;
+    }
+
+    .button {
+        padding: 0.8em 3em;
+        border-radius: 15px;
+        border: none;
+        outline: none;
+        transition: all 0.3s ease;
+        font-size: 1em;
+        font-weight: bold;
+        background: linear-gradient(135deg, #ffd700, #b8860b);
+        color: #000;
+        cursor: pointer;
+    }
+
+    .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .bottom-text {
+        text-align: center;
+        margin-top: 1.5em;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9em;
+    }
+
+    .bottom-text a {
+        color: #ffd700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .bottom-text a:hover {
+        text-decoration: underline;
+    }
+
+    .error-message {
+        color: #ff4444;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        text-align: left;
+        padding-left: 1em;
+    }
+
+    .field-error {
+        border-color: #ff4444;
+    }
+</style>
+
+<video autoplay muted loop class="bg-video">
+    <source src="{% static 'core/videos/login_bg.mp4' %}" type="video/mp4">
+    Your browser does not support HTML5 video.
+</video>
+
+<div class="card">
+    <div class="card2">
+        <form method="post" class="form">
+            {% csrf_token %}
+            <p id="heading">Create Account</p>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error-message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="field {% if form.username.errors %}field-error{% endif %}">
+                <svg class="input-icon" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                </svg>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="field {% if form.first_name.errors %}field-error{% endif %}">
+                <svg class="input-icon" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                </svg>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="error-message">{{ form.first_name.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="field {% if form.last_name.errors %}field-error{% endif %}">
+                <svg class="input-icon" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                </svg>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div class="error-message">{{ form.last_name.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="field {% if form.email.errors %}field-error{% endif %}">
+                <svg class="input-icon" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v0.217l-8 4.8-8-4.8V4zm0 1.383v6.634l5.803-3.48L0 5.383zM6.761 9.674L0 13.383V14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-0.617l-6.761-3.709L8 10.383l-1.239-.709zM10.197 8.537L16 5.383v6.634l-5.803-3.48z"/>
+                </svg>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="error-message">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="field {% if form.password1.errors %}field-error{% endif %}">
+                <svg class="input-icon" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                </svg>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="error-message">{{ form.password1.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="field {% if form.password2.errors %}field-error{% endif %}">
+                <svg class="input-icon" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                </svg>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="error-message">{{ form.password2.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="button">Sign Up</button>
+            </div>
+
+            <div class="bottom-text">
+                Already have an account? <a href="{% url 'login' %}">Sign In</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

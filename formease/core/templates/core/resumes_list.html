@@ -1,0 +1,59 @@
+{% extends "core/base.html" %}
+
+{% block title %}My Resumes - FormEase{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">My Resumes</h1>
+        <a href="{% url 'resume_builder' %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>Create New Resume
+        </a>
+    </div>
+
+    {% if resumes %}
+        <div class="row g-4">
+            {% for resume in resumes %}
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ resume.full_name }}</h5>
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            Created: {{ resume.created_at|date:"F j, Y" }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary me-2">
+                                    {{ resume.education|length }} Education
+                                </span>
+                                <span class="badge bg-info me-2">
+                                    {{ resume.experience|length }} Experience
+                                </span>
+                                <span class="badge bg-success">
+                                    {{ resume.skills|length }} Skills
+                                </span>
+                            </div>
+                            <a href="{% url 'download_resume_pdf' resume.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-download me-2"></i>Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-file-alt fa-4x text-muted"></i>
+            </div>
+            <h2 class="h4 mb-3">No Resumes Yet</h2>
+            <p class="text-muted mb-4">Create your first resume using our AI-powered resume builder.</p>
+            <a href="{% url 'resume_builder' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus-circle me-2"></i>Create Resume
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

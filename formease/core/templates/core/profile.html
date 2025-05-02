@@ -1,0 +1,325 @@
+{% extends "core/base.html" %}
+{% block title %}My Profile - FormEase{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} fade-out">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- First Section - Profile Cards -->
+    <div class="profile-section">
+        <!-- Left Card - Profile Display -->
+        <div class="profile-card">
+            <div class="profile-photo-wrapper">
+                {% if user.userprofile.profile_photo %}
+                    <img src="{{ user.userprofile.profile_photo.url }}" alt="Profile Photo" class="profile-photo">
+                {% else %}
+                    <i class="fas fa-user-circle" style="font-size: 180px; color: #ffd700;"></i>
+                {% endif %}
+            </div>
+            
+            <div class="profile-info">
+                <div class="info-group">
+                    <div class="info-label">Name</div>
+                    <div class="info-value" id="display-name">{{ user.get_full_name }}</div>
+                </div>
+                
+                <div class="info-group">
+                    <div class="info-label">Username</div>
+                    <div class="info-value">{{ user.username }}</div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Email</div>
+                    <div class="info-value" id="display-email">{{ user.email }}</div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value" id="display-phone">{{ user.userprofile.phone_number|default:"Not provided" }}</div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Age</div>
+                    <div class="info-value" id="display-age">{{ user.userprofile.age|default:"Not provided" }}</div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Gender</div>
+                    <div class="info-value" id="display-gender">
+                        {% if user.userprofile.gender == 'M' %}
+                            Male
+                        {% elif user.userprofile.gender == 'F' %}
+                            Female
+                        {% elif user.userprofile.gender == 'O' %}
+                            Other
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Address</div>
+                    <div class="info-value address-value" id="display-address">{{ user.userprofile.address|default:"Not provided" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Card - Edit Profile -->
+        <div class="profile-card profile-edit-card">
+            <h2 class="section-title">Edit Profile</h2>
+            <form class="edit-form" method="post" enctype="multipart/form-data" id="profile-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    {{ user_form.first_name }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    {{ user_form.last_name }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    {{ user_form.email }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    {{ profile_form.phone_number }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Age</label>
+                    {{ profile_form.age }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Gender</label>
+                    <div class="gender-group">
+                        {% for radio in profile_form.gender %}
+                            <div class="gender-option">
+                                {{ radio.tag }}
+                                <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    {{ profile_form.address }}
+                </div>
+
+                <button type="submit" class="save-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Second Section - Additional Information -->
+    <div class="additional-info">
+        <h2 class="section-title">Additional Information</h2>
+        <form class="edit-form" method="post" enctype="multipart/form-data" id="additional-form">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="additional">
+
+            <div class="info-section">
+                <h3 class="subsection-title">Educational Details</h3>
+                <div class="form-group">
+                    <label class="form-label">Highest Education</label>
+                    {{ profile_form.highest_education }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Institution</label>
+                    {{ profile_form.institution }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Field of Study</label>
+                    {{ profile_form.field_of_study }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Graduation Year</label>
+                    {{ profile_form.graduation_year }}
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3 class="subsection-title">Skills</h3>
+                <div class="form-group">
+                    {{ profile_form.skills }}
+                    <div class="form-text">Enter your skills separated by commas (e.g., Python, JavaScript, Project Management)</div>
+                    <div class="skills-list" id="skills-display">
+                        {% if user.userprofile.skills %}
+                            {% for skill in user.userprofile.skills.split|cut:" " %}
+                                <span class="skill-tag">{{ skill }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3 class="subsection-title">Bio</h3>
+                <div class="form-group">
+                    {{ profile_form.bio }}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="save-btn">Save Changes</button>
+                <a href="#" class="create-resume-btn">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Create Resume
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .messages {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        width: 300px;
+    }
+
+    .alert {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        color: #fff;
+        backdrop-filter: blur(10px);
+    }
+
+    .alert-success {
+        background: rgba(40, 167, 69, 0.9);
+        border: 1px solid rgba(40, 167, 69, 0.2);
+    }
+
+    .alert-error {
+        background: rgba(220, 53, 69, 0.9);
+        border: 1px solid rgba(220, 53, 69, 0.2);
+    }
+
+    .fade-out {
+        animation: fadeOut 0.5s ease-in-out 4.5s forwards;
+    }
+
+    @keyframes fadeOut {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(100%); }
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .form-actions .save-btn,
+    .form-actions .create-resume-btn {
+        flex: 1;
+    }
+
+    .form-text {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to update displayed values
+    function updateDisplayValues() {
+        const firstName = document.querySelector('[name="first_name"]').value;
+        const lastName = document.querySelector('[name="last_name"]').value;
+        document.getElementById('display-name').textContent = `${firstName} ${lastName}`.trim() || 'Not provided';
+        document.getElementById('display-email').textContent = document.querySelector('[name="email"]').value || 'Not provided';
+        document.getElementById('display-phone').textContent = document.querySelector('[name="phone_number"]').value || 'Not provided';
+        document.getElementById('display-age').textContent = document.querySelector('[name="age"]').value || 'Not provided';
+        document.getElementById('display-address').textContent = document.querySelector('[name="address"]').value || 'Not provided';
+        
+        const selectedGender = document.querySelector('input[name="gender"]:checked');
+        if (selectedGender) {
+            const genderLabel = selectedGender.nextElementSibling.textContent;
+            document.getElementById('display-gender').textContent = genderLabel;
+        }
+    }
+
+    // Listen for form changes
+    const form = document.getElementById('profile-form');
+    if (form) {
+        const formInputs = form.querySelectorAll('input, textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('input', updateDisplayValues);
+        });
+    }
+
+    // Update skills display when skills textarea changes
+    const skillsInput = document.querySelector('[name="skills"]');
+    const skillsDisplay = document.getElementById('skills-display');
+    
+    if (skillsInput && skillsDisplay) {
+        skillsInput.addEventListener('input', function() {
+            const skills = this.value.split(',')
+                .map(skill => skill.trim())
+                .filter(skill => skill);
+            
+            skillsDisplay.innerHTML = skills
+                .map(skill => `<span class="skill-tag">${skill}</span>`)
+                .join('');
+        });
+
+        // Initialize skills display on page load
+        const initialSkills = skillsInput.value.split(',')
+            .map(skill => skill.trim())
+            .filter(skill => skill);
+        
+        if (initialSkills.length > 0) {
+            skillsDisplay.innerHTML = initialSkills
+                .map(skill => `<span class="skill-tag">${skill}</span>`)
+                .join('');
+        }
+    }
+
+    // Submit handler for both forms
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+            }
+        });
+    });
+
+    // Handle alerts
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.classList.add('fade-out');
+            setTimeout(() => alert.remove(), 500);
+        }, 4500);
+    });
+});
+</script>
+{% endblock %}

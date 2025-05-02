@@ -1,0 +1,366 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block styles %}
+
+<style>
+    /* Reset and base styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+        background-color: #000;
+        color: #fff;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* Header styles */
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: rgba(20, 20, 20, 0.8);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+        font-size: 2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        color: #ccc;
+        text-transform: uppercase;
+    }
+
+    .nav-center {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .nav-center a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: color 0.3s;
+    }
+
+    .nav-center a:hover {
+        color: #ffd700;
+    }
+
+    .social-icons {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .social-icons a {
+        color: #fff;
+        font-size: 1.2rem;
+        transition: color 0.3s;
+    }
+
+    .social-icons a:hover {
+        color: #ffd700;
+    }
+
+    /* Hero section */
+    .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        padding: 0 2rem;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .discover-btn {
+        display: inline-block;
+        padding: 1rem 3rem;
+        background-color: transparent;
+        color: #ffd700;
+        border: 2px solid #ffd700;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+        font-size: 1.1rem;
+        margin-bottom: 4rem;
+    }
+
+    .discover-btn::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #ffd700, transparent, #ffd700);
+        z-index: -1;
+        opacity: 0.3;
+    }
+
+    .discover-btn:hover {
+        background-color: rgba(255, 215, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    /* Scroll down indicator */
+    .scroll-down {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 2;
+        cursor: pointer;
+        animation: bounce 2s infinite;
+    }
+
+    .scroll-down-text {
+        margin-bottom: 0.5rem;
+        letter-spacing: 2px;
+        font-size: 0.9rem;
+    }
+
+    .scroll-down-arrow {
+        font-size: 1.5rem;
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0) translateX(-50%);
+        }
+        40% {
+            transform: translateY(-10px) translateX(-50%);
+        }
+        60% {
+            transform: translateY(-5px) translateX(-50%);
+        }
+    }
+
+    /* Weapon images - Updated styles */
+    .weapon {
+        position: absolute;
+        z-index: 2;
+        width: 250px;
+        height: 250px;
+        object-fit: contain;
+        opacity: 0.5;
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+    }
+
+    .weapon-1 {
+        top: 20%;
+        left: 5%;
+        transform: rotate(-15deg);
+    }
+
+    .weapon-2 {
+        top: 15%;
+        right: 5%;
+        transform: rotate(15deg);
+    }
+
+    .weapon-3 {
+        bottom: 20%;
+        left: 10%;
+        transform: rotate(30deg);
+    }
+
+    /* Stars background effect */
+    .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background-color: #fff;
+        border-radius: 50%;
+        opacity: 0.5;
+        animation: twinkle 5s infinite;
+    }
+
+    @keyframes twinkle {
+        0% { opacity: 0.2; }
+        50% { opacity: 0.8; }
+        100% { opacity: 0.2; }
+    }
+
+    /* Import fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <!-- Weapon images with updated opacity and size -->
+    <img src="{% static 'core/images/image1.jpg' %}" alt="Weapon" class="weapon weapon-1">
+    <img src="{% static 'core/images/image2.jpg' %}" alt="Weapon" class="weapon weapon-2">
+    <img src="{% static 'core/images/image3.jpg' %}" alt="Weapon" class="weapon weapon-3">
+
+    <div class="hero-content">
+        <h1 class="hero-title">FormEase<br>Everything in one Platform</h1>
+        <p class="hero-subtitle">Summarizing PDFs</p>
+        <a href="#discover" class="discover-btn">Discover</a>
+    </div>
+</section>
+
+<section class="feature" id="discover" style="min-height: 80vh; display: flex; align-items: center;">
+    <div style="flex: 1; padding: 2rem;">
+        <h2>PDF Summary</h2>
+        <p>Quickly summarize your PDFs with ease and precision.</p>
+    </div>
+    <div style="flex: 1; padding: 2rem;">
+        <div style="width: 100%; height: 100%; background-color: #333; transform: rotate(-5deg);">
+            <img src="{% static 'core/images/pdfsum.png' %}" alt="PDF Summary" style="width: 100%; height: 100%; object-fit: cover; transform: rotate(5deg);">
+        </div>
+    </div>
+</section>
+
+<section class="feature" style="min-height: 80vh; display: flex; align-items: center; flex-direction: row-reverse;">
+    <div style="flex: 1; padding: 2rem;">
+        <h2>Resume Builder</h2>
+        <p>Create professional resumes effortlessly.</p>
+    </div>
+    <div style="flex: 1; padding: 2rem;">
+        <div style="width: 100%; height: 100%; background-color: #333; transform: rotate(-5deg);">
+            <img src="{% static 'core/images/resumebuild.png' %}" alt="Resume Builder" style="width: 100%; height: 80%; object-fit: cover; transform: rotate(5deg);">
+        </div>
+    </div>
+</section>
+
+<section class="feature" style="min-height: 80vh; display: flex; align-items: center;">
+    <div style="flex: 1; padding: 2rem;">
+        <h2>To-Do List</h2>
+        <p>Organize your tasks and stay productive.</p>
+    </div>
+    <div style="flex: 1; padding: 2rem;">
+        <div style="width: 100%; height: 100%; background-color: #333; transform: rotate(-5deg);">
+            <img src="{% static 'core/images/todolist.png' %}" alt="To-Do List" style="width: 100%; height: 80%; object-fit: cover; transform: rotate(5deg);">
+        </div>
+    </div>
+</section>
+
+<section class="feature" style="min-height: 80vh; display: flex; align-items: center; flex-direction: row-reverse;">
+    <div style="flex: 1; padding: 2rem;">
+        <h2>PDF Controls</h2>
+        <p>Merge, split, and edit your PDFs seamlessly.</p>
+    </div>
+    <div style="flex: 1; padding: 2rem;">
+        <div style="width: 100%; height: 100%; background-color: #333; transform: rotate(-5deg);">
+            <img src="{% static 'core/images/pdfcontrol.png' %}" alt="PDF Controls" style="width: 100%; height: 80%; object-fit: cover; transform: rotate(5deg);">
+        </div>
+    </div>
+</section>
+
+<section class="feature" style="min-height: 80vh; display: flex; align-items: center;">
+    <div style="flex: 1; padding: 2rem;">
+        <h2>Mind Maps</h2>
+        <p>Visualize your ideas and concepts effectively.</p>
+    </div>
+    <div style="flex: 1; padding: 2rem;">
+        <div style="width: 100%; height: 100%; background-color: #333; transform: rotate(-5deg);">
+            <img src="{% static 'core/images/mindmap.png' %}" alt="Mind Maps" style="width: 100%; height: 80%; object-fit: cover; transform: rotate(5deg);">
+        </div>
+    </div>
+</section>
+
+<section class="feature" style="min-height: 80vh; display: flex; align-items: center; flex-direction: row-reverse;">
+    <div style="flex: 1; padding: 2rem;">
+        <h2>QnA Generation</h2>
+        <p>Generate questions and answers from your documents.</p>
+    </div>
+    <div style="flex: 1; padding: 2rem;">
+        <div style="width: 100%; height: 100%; background-color: #333; transform: rotate(-5deg);">
+            <img src="{% static 'core/images/qna.png' %}" alt="QnA Generation" style="width: 100%; height: 100%; object-fit: cover; transform: rotate(5deg);">
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+<script>
+    // Create stars background
+    document.addEventListener('DOMContentLoaded', function() {
+        const starsContainer = document.getElementById('stars');
+        const starsCount = 100;
+        
+        for (let i = 0; i < starsCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.top = ${Math.random() * 100}%;
+            star.style.left = ${Math.random() * 100}%;
+            star.style.animationDelay = ${Math.random() * 5}s;
+            starsContainer.appendChild(star);
+        }
+        
+        // Smooth scroll for the scroll down button
+        document.querySelector('.scroll-down').addEventListener('click', function() {
+            window.scrollTo({
+                top: window.innerHeight,
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>

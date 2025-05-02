@@ -1,0 +1,372 @@
+{% extends "core/base.html" %}
+
+{% block title %}Resume Builder - FormEase{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        display: none;
+    }
+    .form-section.active {
+        display: block;
+    }
+    .progress {
+        height: 5px;
+    }
+    
+    /* Resume Preview Styles */
+    .generated-resume {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        color: #333;
+    }
+    
+    .generated-resume h1 {
+        color: #2c3e50;
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+    
+    .generated-resume .contact-info {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    
+    .generated-resume .section {
+        margin-bottom: 20px;
+    }
+    
+    .generated-resume .section-title {
+        color: #2c3e50;
+        font-size: 18px;
+        border-bottom: 2px solid #3498db;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+    }
+    
+    .generated-resume .entry {
+        margin-bottom: 15px;
+    }
+    
+    .generated-resume .entry-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .generated-resume .entry-subtitle {
+        color: #666;
+        font-style: italic;
+        margin-bottom: 5px;
+    }
+    
+    .generated-resume .entry-date {
+        color: #666;
+        font-size: 14px;
+    }
+    
+    .generated-resume .skills-category {
+        margin-bottom: 10px;
+    }
+    
+    .generated-resume .skills-list {
+        margin: 0;
+        padding-left: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">Build Your Resume</h2>
+                    
+                    {% if not form_type %}
+                    <div class="text-center mb-4">
+                        <p class="lead mb-4">Choose how you want to create your resume</p>
+                        <form method="get">
+                            <input type="hidden" name="type" value="auto">
+                            <button type="submit" class="btn btn-primary btn-lg mb-3 w-100">
+                                <i class="fas fa-magic me-2"></i>Use My Profile Details
+                            </button>
+                        </form>
+                        <form method="get">
+                            <input type="hidden" name="type" value="custom">
+                            <button type="submit" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fas fa-edit me-2"></i>Create Custom Resume
+                            </button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <!-- Progress Bar -->
+                    <div class="progress mb-4">
+                        <div class="progress-bar" role="progressbar" style="width: 25%"></div>
+                    </div>
+                    
+                    <form id="resumeForm" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="{{ form_type }}">
+                        
+                        <!-- Personal Information Section -->
+                        <div class="form-section active" data-step="1">
+                            <h3 class="h4 mb-4">Personal Information</h3>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" name="full_name" class="form-control" required value="{{ auto_fill.full_name }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control" required value="{{ auto_fill.email }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" name="phone" class="form-control" required value="{{ auto_fill.phone }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" name="location" class="form-control" required value="{{ auto_fill.location }}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Professional Summary</label>
+                                    <textarea name="summary" class="form-control" rows="4" required>{{ auto_fill.summary }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Education Section -->
+                        <div class="form-section" data-step="2">
+                            <h3 class="h4 mb-4">Education</h3>
+                            <div id="educationContainer">
+                                {% if auto_fill.education %}
+                                    <div class="education-entry border rounded p-3 mb-3">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Degree/Certificate</label>
+                                                <input type="text" name="education[0][degree]" class="form-control" required value="{{ auto_fill.education.degree }}">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Institution</label>
+                                                <input type="text" name="education[0][institution]" class="form-control" required value="{{ auto_fill.education.institution }}">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Start Date</label>
+                                                <input type="month" name="education[0][start_date]" class="form-control" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">End Date</label>
+                                                <input type="month" name="education[0][end_date]" class="form-control" value="{{ auto_fill.education.graduation_year }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="education-entry border rounded p-3 mb-3">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Degree/Certificate</label>
+                                                <input type="text" name="education[0][degree]" class="form-control" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Institution</label>
+                                                <input type="text" name="education[0][institution]" class="form-control" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Start Date</label>
+                                                <input type="month" name="education[0][start_date]" class="form-control" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">End Date</label>
+                                                <input type="month" name="education[0][end_date]" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addEducation">
+                                <i class="fas fa-plus"></i> Add Education
+                            </button>
+                        </div>
+                        
+                        <!-- Experience Section -->
+                        <div class="form-section" data-step="3">
+                            <h3 class="h4 mb-4">Work Experience</h3>
+                            <div id="experienceContainer">
+                                <div class="experience-entry border rounded p-3 mb-3">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Job Title</label>
+                                            <input type="text" name="experience[0][title]" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Company</label>
+                                            <input type="text" name="experience[0][company]" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Start Date</label>
+                                            <input type="month" name="experience[0][start_date]" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">End Date</label>
+                                            <input type="month" name="experience[0][end_date]" class="form-control">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Description</label>
+                                            <textarea name="experience[0][description]" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addExperience">
+                                <i class="fas fa-plus"></i> Add Experience
+                            </button>
+                        </div>
+                        
+                        <!-- Skills Section -->
+                        <div class="form-section" data-step="4">
+                            <h3 class="h4 mb-4">Skills</h3>
+                            <div id="skillsContainer">
+                                <div class="skills-category border rounded p-3 mb-3">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Category</label>
+                                            <input type="text" name="skills[0][category]" class="form-control" placeholder="e.g., Programming Languages" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Skills (comma-separated)</label>
+                                            <input type="text" name="skills[0][skills]" class="form-control" placeholder="e.g., Python, JavaScript, Java" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addSkillCategory">
+                                <i class="fas fa-plus"></i> Add Skill Category
+                            </button>
+                        </div>
+                        
+                        <!-- Navigation Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">Previous</button>
+                            <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+                            <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">Generate Resume</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if resume_content %}
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="h4 mb-4">Generated Resume</h3>
+                    <div class="generated-resume">
+                        {{ resume_content|safe }}
+                    </div>
+                    <div class="text-end mt-3">
+                        <a href="{% url 'download_resume_pdf' resume_id %}" class="btn btn-primary">
+                            <i class="fas fa-download me-2"></i>Download PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('resumeForm');
+    const sections = document.querySelectorAll('.form-section');
+    const progressBar = document.querySelector('.progress-bar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    let currentStep = 1;
+    
+    // Navigation functions
+    function showSection(step) {
+        sections.forEach(section => {
+            section.classList.remove('active');
+            if (parseInt(section.dataset.step) === step) {
+                section.classList.add('active');
+            }
+        });
+        
+        // Update progress bar
+        progressBar.style.width = `${(step / sections.length) * 100}%`;
+        
+        // Update buttons
+        prevBtn.style.display = step > 1 ? 'block' : 'none';
+        nextBtn.style.display = step < sections.length ? 'block' : 'none';
+        submitBtn.style.display = step === sections.length ? 'block' : 'none';
+    }
+    
+    // Event listeners for navigation
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+            currentStep--;
+            showSection(currentStep);
+        }
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        if (currentStep < sections.length) {
+            currentStep++;
+            showSection(currentStep);
+        }
+    });
+    
+    // Add Education Entry
+    let educationCount = 1;
+    document.getElementById('addEducation').addEventListener('click', () => {
+        const container = document.getElementById('educationContainer');
+        const template = container.children[0].cloneNode(true);
+        const inputs = template.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.value = '';
+            input.name = input.name.replace('[0]', `[${educationCount}]`);
+        });
+        container.appendChild(template);
+        educationCount++;
+    });
+    
+    // Add Experience Entry
+    let experienceCount = 1;
+    document.getElementById('addExperience').addEventListener('click', () => {
+        const container = document.getElementById('experienceContainer');
+        const template = container.children[0].cloneNode(true);
+        const inputs = template.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.value = '';
+            input.name = input.name.replace('[0]', `[${experienceCount}]`);
+        });
+        container.appendChild(template);
+        experienceCount++;
+    });
+    
+    // Add Skills Category
+    let skillsCount = 1;
+    document.getElementById('addSkillCategory').addEventListener('click', () => {
+        const container = document.getElementById('skillsContainer');
+        const template = container.children[0].cloneNode(true);
+        const inputs = template.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.value = '';
+            input.name = input.name.replace('[0]', `[${skillsCount}]`);
+        });
+        container.appendChild(template);
+        skillsCount++;
+    });
+});
+</script>
+{% endblock %}
