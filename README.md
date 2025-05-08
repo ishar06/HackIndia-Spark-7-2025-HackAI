@@ -1,5 +1,5 @@
 
-# 🚀 FormEase – Your AI-Powered Productivity Assistant
+# 🚀 FormEase – Your AI-Powered Productivity Assistant 
 
 Welcome to **FormEase**, a powerful, all-in-one AI assistant that helps users manage documents, summarize content, generate resumes, and stay productive — all through a smart chat interface powered by LLMs.
 
